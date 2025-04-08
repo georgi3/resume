@@ -1,6 +1,6 @@
 // src/components/Education.tsx
 import React from 'react';
-import { EducationData } from '../types/resumeTypes';
+import { EducationData } from '../../../types/resumeTypes';
 
 interface EducationProps {
   data: EducationData;

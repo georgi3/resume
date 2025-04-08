@@ -1,6 +1,6 @@
 // src/components/Header.tsx
 import React from 'react';
-import { HeaderData } from '../types/resumeTypes';
+import { HeaderData } from '../../../types/resumeTypes';
 
 interface HeaderProps {
   data: HeaderData;
@@ -8,7 +8,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ data }) => {
   return (
-      <header className="mb-4">
+      <header className="mb-2">
           <div className="flex items-baseline justify-between">
               <h1 className="text-3xl font-bold">{data.name}</h1>
               <h2 className="text-xl text-gray-700">{data.title}</h2>

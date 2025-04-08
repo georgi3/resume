@@ -1,6 +1,6 @@
 // src/components/ProfessionalSummary.tsx
 import React from 'react';
-import { SummaryData } from '../types/resumeTypes';
+import { SummaryData } from '../../../types/resumeTypes';
 
 interface ProfessionalSummaryProps {
   data: SummaryData;
@@ -8,9 +8,9 @@ interface ProfessionalSummaryProps {
 
 const ProfessionalSummary: React.FC<ProfessionalSummaryProps> = ({ data }) => {
   return (
-    <section className="mb-6">
+    <section className="mb-2">
       <h2 className="text-lg font-bold uppercase mb-2">Professional Summary</h2>
-      <p className="text-sm text-justify">{data.text}</p>
+      <p className="text-sm">{data.text}</p>
     </section>
   );
 };

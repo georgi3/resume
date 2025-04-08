@@ -1,6 +1,6 @@
 // src/components/Skills.tsx
 import React from 'react';
-import { SkillsData, Skill } from '../types/resumeTypes';
+import { SkillsData, Skill } from '../../../types/resumeTypes';
 
 interface SkillsProps {
   data: SkillsData;

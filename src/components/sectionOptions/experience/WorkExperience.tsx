@@ -1,6 +1,6 @@
 // src/components/WorkExperience.tsx
 import React from 'react';
-import { WorkExperienceData } from '../types/resumeTypes';
+import { WorkExperienceData } from '../../../types/resumeTypes';
 
 interface WorkExperienceProps {
   data: WorkExperienceData;
@@ -8,7 +8,7 @@ interface WorkExperienceProps {
 
 const WorkExperience: React.FC<WorkExperienceProps> = ({ data }) => {
   return (
-    <section className="mb-6">
+    <section className="mb-3">
       <h2 className="text-lg font-bold uppercase mb-2">Work Experience</h2>
       
       {data.experiences.map((job, index) => (

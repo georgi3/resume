@@ -1,6 +1,6 @@
 // src/components/CompactSkills.tsx
 import React from 'react';
-import { SkillsData } from '../types/resumeTypes';
+import { SkillsData } from '../../../types/resumeTypes';
 
 interface SkillsProps {
     data: SkillsData;
@@ -10,9 +10,9 @@ const CompactSkills: React.FC<SkillsProps> = ({ data }) => {
     // If categories exist, render skills grouped by category in a compact format
     if (data.categories && data.categories.length > 0) {
         return (
-            <section className="mb-6">
+            <section className="mb-2">
                 <h2 className="text-lg font-bold uppercase mb-2">Skills</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
                     {data.categories.map((category) => {
                         const categorySkills = data.skills.filter(skill => skill.category === category);
 
@@ -39,7 +39,7 @@ const CompactSkills: React.FC<SkillsProps> = ({ data }) => {
 
     // Otherwise, render a simple inline skill list
     return (
-        <section className="mb-6">
+        <section className="mb-2">
             <h2 className="text-lg font-bold uppercase mb-2">Skills</h2>
             <div className="text-sm">
                 {data.skills.map((skill, index) => (

@@ -1,6 +1,6 @@
 // src/components/Footer.tsx
 import React from 'react';
-import { FooterData } from '../types/resumeTypes';
+import { FooterData } from '../../../types/resumeTypes';
 
 interface FooterProps {
   data: FooterData;
