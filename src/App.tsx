@@ -1,73 +1,121 @@
 // src/App.tsx
 import React, { useState } from 'react';
 import ResumeContainer from './components/ResumeContainer';
-import { generatePDF, printResume } from './utils/pdfGenerator';
+import ResumeSidebar from './components/sidebar/ResumeSidebar';
+import { generatePDF } from './utils/pdfGenerator';
+import { ResumeI } from './types/resumeTypes';
 
 // Import data
-import {
-  headerData,
-  summaryData,
-  skillsData,
-  educationData,
-  workExperienceData,
-  footerData
-} from './data/data'
+import resumesArray from './data/data';
 
 const App: React.FC = () => {
   const [useCompactSkills, setUseCompactSkills] = useState<boolean>(true);
+  const [activeResumeIndex, setActiveResumeIndex] = useState<number>(
+      resumesArray.findIndex(res => res.title === 'Master') !== -1
+          ? resumesArray.findIndex(res => res.title === 'Master')
+          : 0
+  );
+
+  // Create a deep copy of resumes to modify
+  const [resumes, setResumes] = useState<ResumeI[]>(
+      JSON.parse(JSON.stringify(resumesArray))
+  );
+
+  const activeResume = resumes[activeResumeIndex];
+
+  const handleResumeSelect = (index: number) => {
+    setActiveResumeIndex(index);
+  };
+
+  const toggleCompactSkills = () => {
+    setUseCompactSkills(!useCompactSkills);
+
+    // Update the resume's skill design selection based on the toggle
+    // This is for backward compatibility until the design system is fully implemented
+    const updatedResumes = [...resumes];
+    updatedResumes[activeResumeIndex] = {
+      ...updatedResumes[activeResumeIndex],
+      designSelections: {
+        ...updatedResumes[activeResumeIndex].designSelections,
+        skillsDesign: !useCompactSkills ? 'compact' : 'detailed'
+      }
+    };
+
+    setResumes(updatedResumes);
+  };
+
+  const handleDesignSelect = (sectionId: string, designName: string) => {
+    const designKey = `${sectionId}Design`;
+
+    // Deep clone the current resumes array
+    const updatedResumes = [...resumes];
+
+    // Update the design selection for the active resume
+    updatedResumes[activeResumeIndex] = {
+      ...updatedResumes[activeResumeIndex],
+      designSelections: {
+        ...updatedResumes[activeResumeIndex].designSelections,
+        [designKey]: designName
+      }
+    };
+
+    setResumes(updatedResumes);
+
+    // Also update the compact skills toggle if changing skills design
+    if (sectionId === 'skills') {
+      setUseCompactSkills(designName === 'compact');
+    }
+  };
 
   return (
-      <div className="min-h-screen bg-gray-100 py-8">
-        <div className="container mx-auto">
-          <div className="flex justify-center mb-6">
-            <h1 className="text-2xl font-bold text-gray-800">Resume Generator</h1>
+      <div className="h-screen bg-gray-50">
+        {/* Sidebar */}
+        <ResumeSidebar
+            resumes={resumes}
+            activeResumeIndex={activeResumeIndex}
+            onResumeSelect={handleResumeSelect}
+            useCompactSkills={useCompactSkills}
+            onToggleCompactSkills={toggleCompactSkills}
+            onDesignSelect={handleDesignSelect}
+        />
+
+        {/* Main content */}
+        <div className="lg:pl-72">
+          <div className="sticky top-0 z-40 flex justify-between bg-white px-6 py-4 shadow-sm lg:hidden">
+            <h1 className="text-xl font-semibold text-gray-900">Resume Builder</h1>
           </div>
 
-          <div className="flex flex-col md:flex-row justify-center items-center mb-6 space-y-4 md:space-y-0 md:space-x-4">
-            <div className="flex space-x-4">
-              <button
-                  onClick={() => generatePDF('resume-content', `${headerData.name.split(' ').join('_')}_CV.pdf`)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-              >
-                Download as PDF
-              </button>
+          <main className="py-8">
+            <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+              {/* Controls for PDF download and printing */}
+              <div className="mb-6 flex flex-wrap justify-center gap-4">
+                <button
+                    onClick={() => generatePDF('resume-content', `${activeResume.headerData.name.split(' ').join('_')}_CV.pdf`)}
+                    // onClick={() => generatePDF('resume-content', `Headless_CV.pdf`)}
+                    className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Download as PDF
+                </button>
+              </div>
 
-              <button
-                  onClick={() => printResume('resume-content')}
-                  className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition"
-              >
-                Print Resume
-              </button>
+              {/* Current resume info */}
+              <div className="mb-6 text-center">
+                <h2 className="text-lg font-medium text-gray-900">
+                  <span className="text-blue-600">{activeResume.title}</span> Resume
+                </h2>
+              </div>
+
+              {/* Resume container */}
+              <ResumeContainer
+                  resume={activeResume}
+                  useCompactSkills={useCompactSkills}
+              />
+
+              <div className="mt-8 text-center text-sm text-gray-500">
+                <p>For the best print results, use Chrome or Edge browsers.</p>
+              </div>
             </div>
-
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-700">Compact Skills:</span>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                    type="checkbox"
-                    className="sr-only peer"
-                    checked={useCompactSkills}
-                    onChange={() => setUseCompactSkills(!useCompactSkills)}
-                />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-              </label>
-            </div>
-          </div>
-
-          <ResumeContainer
-              headerData={headerData}
-              summaryData={summaryData}
-              skillsData={skillsData}
-              workExperienceData={workExperienceData}
-              educationData={educationData}
-              footerData={footerData}
-              useCompactSkills={useCompactSkills}
-          />
-
-          <div className="mt-8 text-center text-sm text-gray-500">
-            <p>For the best print results, use Chrome or Edge browsers.</p>
-            <p>PDF download functionality uses html2pdf.js library.</p>
-          </div>
+          </main>
         </div>
       </div>
   );

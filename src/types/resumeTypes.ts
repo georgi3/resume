@@ -1,4 +1,5 @@
 // src/types/resumeTypes.ts
+import {ResumeDesignSelections} from "./designTypes";
 
 interface HeaderData {
   name: string;
@@ -60,6 +61,19 @@ interface FooterData {
   text?: string;
   lastUpdated?: string;
 }
+
+interface ResumeI {
+  id?: string;
+  title: string;
+  headerData: HeaderData;
+  summaryData: SummaryData;
+  skillsData: SkillsData;
+  workExperienceData: WorkExperienceData;
+  educationData: EducationData;
+  footerData?: FooterData;
+  designSelections: ResumeDesignSelections;
+}
+
 export type {
   HeaderData,
   SummaryData,
@@ -70,4 +84,5 @@ export type {
   Education,
   EducationData,
   FooterData,
+  ResumeI
 }
