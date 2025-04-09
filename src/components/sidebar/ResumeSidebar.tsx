@@ -11,7 +11,7 @@ import {
   Bars3Icon
 } from '@heroicons/react/24/outline';
 import SidebarSection from './SidebarSection';
-import { ResumeI } from '../../types/resumeTypes';
+import { Resume } from '../../types/resumeTypes';
 
 // This will be replaced with actual imports from section design files
 const sectionTypes = [
@@ -24,11 +24,9 @@ const sectionTypes = [
 ];
 
 interface ResumeSidebarProps {
-  resumes: ResumeI[];
+  resumes: Resume[];
   activeResumeIndex: number;
   onResumeSelect: (index: number) => void;
-  useCompactSkills: boolean;
-  onToggleCompactSkills: () => void;
   onDesignSelect?: (sectionId: string, designName: string) => void; // New prop
 }
 
@@ -37,8 +35,6 @@ const ResumeSidebar: React.FC<ResumeSidebarProps> = ({
   resumes, 
   activeResumeIndex, 
   onResumeSelect,
-  useCompactSkills,
-  onToggleCompactSkills,
   onDesignSelect
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -119,8 +115,6 @@ const ResumeSidebar: React.FC<ResumeSidebarProps> = ({
                                 resumes={resumes}
                                 activeResumeIndex={activeResumeIndex}
                                 onResumeSelect={onResumeSelect}
-                                useCompactSkills={useCompactSkills}
-                                onToggleCompactSkills={onToggleCompactSkills}
                               />
                             </div>
                           )}
@@ -166,8 +160,6 @@ const ResumeSidebar: React.FC<ResumeSidebarProps> = ({
                         resumes={resumes}
                         activeResumeIndex={activeResumeIndex}
                         onResumeSelect={onResumeSelect}
-                        useCompactSkills={useCompactSkills}
-                        onToggleCompactSkills={onToggleCompactSkills}
                       />
                     </div>
                   )}

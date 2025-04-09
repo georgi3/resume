@@ -54,7 +54,7 @@ export interface ResumeDesignSelections {
   headerDesign: string;
   summaryDesign: string;
   skillsDesign: string;
-  workExperienceDesign: string;
+  experienceDesign: string;
   educationDesign: string;
   footerDesign?: string;
 }

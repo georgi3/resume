@@ -2,23 +2,29 @@
 import React, { useState } from 'react';
 import ResumeContainer from './components/ResumeContainer';
 import ResumeSidebar from './components/sidebar/ResumeSidebar';
-import { generatePDF } from './utils/pdfGenerator';
-import { ResumeI } from './types/resumeTypes';
+import PDFDownloadButton from './components/PDFDownloadButton';
+import { Resume } from './types/resumeTypes';
+import { getDefaultDesignSelections } from './registry/designRegistry';
 
 // Import data
 import resumesArray from './data/data';
 
+// Add design selections to each resume if not already present
+const initialResumes = resumesArray.map(resume => ({
+  ...resume,
+  designSelections: resume.designSelections || getDefaultDesignSelections()
+}));
+
 const App: React.FC = () => {
-  const [useCompactSkills, setUseCompactSkills] = useState<boolean>(true);
-  const [activeResumeIndex, setActiveResumeIndex] = useState<number>(
-      resumesArray.findIndex(res => res.title === 'Master') !== -1
-          ? resumesArray.findIndex(res => res.title === 'Master')
-          : 0
+  // Create a deep copy of resumes to modify
+  const [resumes, setResumes] = useState<Resume[]>(
+      JSON.parse(JSON.stringify(initialResumes))
   );
 
-  // Create a deep copy of resumes to modify
-  const [resumes, setResumes] = useState<ResumeI[]>(
-      JSON.parse(JSON.stringify(resumesArray))
+  const [activeResumeIndex, setActiveResumeIndex] = useState<number>(
+      resumes.findIndex(res => res.title === 'Master') !== -1
+          ? resumes.findIndex(res => res.title === 'Master')
+          : 0
   );
 
   const activeResume = resumes[activeResumeIndex];
@@ -27,44 +33,39 @@ const App: React.FC = () => {
     setActiveResumeIndex(index);
   };
 
-  const toggleCompactSkills = () => {
-    setUseCompactSkills(!useCompactSkills);
-
-    // Update the resume's skill design selection based on the toggle
-    // This is for backward compatibility until the design system is fully implemented
-    const updatedResumes = [...resumes];
-    updatedResumes[activeResumeIndex] = {
-      ...updatedResumes[activeResumeIndex],
-      designSelections: {
-        ...updatedResumes[activeResumeIndex].designSelections,
-        skillsDesign: !useCompactSkills ? 'compact' : 'detailed'
-      }
-    };
-
-    setResumes(updatedResumes);
-  };
-
   const handleDesignSelect = (sectionId: string, designName: string) => {
-    const designKey = `${sectionId}Design`;
-
     // Deep clone the current resumes array
     const updatedResumes = [...resumes];
+    const currentResume = {...updatedResumes[activeResumeIndex]};
+    const currentDesignSelections = {...currentResume.designSelections};
 
-    // Update the design selection for the active resume
-    updatedResumes[activeResumeIndex] = {
-      ...updatedResumes[activeResumeIndex],
-      designSelections: {
-        ...updatedResumes[activeResumeIndex].designSelections,
-        [designKey]: designName
-      }
-    };
+    // Update the specific design selection in a type-safe way
+    switch(sectionId) {
+      case 'header':
+        currentDesignSelections.headerDesign = designName;
+        break;
+      case 'summary':
+        currentDesignSelections.summaryDesign = designName;
+        break;
+      case 'skills':
+        currentDesignSelections.skillsDesign = designName;
+        break;
+      case 'experience':
+        currentDesignSelections.experienceDesign = designName;
+        break;
+      case 'education':
+        currentDesignSelections.educationDesign = designName;
+        break;
+      case 'footer':
+        currentDesignSelections.footerDesign = designName;
+        break;
+    }
+
+    // Update the resume with the new design selections
+    currentResume.designSelections = currentDesignSelections;
+    updatedResumes[activeResumeIndex] = currentResume;
 
     setResumes(updatedResumes);
-
-    // Also update the compact skills toggle if changing skills design
-    if (sectionId === 'skills') {
-      setUseCompactSkills(designName === 'compact');
-    }
   };
 
   return (
@@ -74,8 +75,6 @@ const App: React.FC = () => {
             resumes={resumes}
             activeResumeIndex={activeResumeIndex}
             onResumeSelect={handleResumeSelect}
-            useCompactSkills={useCompactSkills}
-            onToggleCompactSkills={toggleCompactSkills}
             onDesignSelect={handleDesignSelect}
         />
 
@@ -87,15 +86,10 @@ const App: React.FC = () => {
 
           <main className="py-8">
             <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-              {/* Controls for PDF download and printing */}
+              {/* Controls for PDF download */}
               <div className="mb-6 flex flex-wrap justify-center gap-4">
-                <button
-                    onClick={() => generatePDF('resume-content', `${activeResume.headerData.name.split(' ').join('_')}_CV.pdf`)}
-                    // onClick={() => generatePDF('resume-content', `Headless_CV.pdf`)}
-                    className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Download as PDF
-                </button>
+                <PDFDownloadButton resume={activeResume} />
+
               </div>
 
               {/* Current resume info */}
@@ -106,10 +100,7 @@ const App: React.FC = () => {
               </div>
 
               {/* Resume container */}
-              <ResumeContainer
-                  resume={activeResume}
-                  useCompactSkills={useCompactSkills}
-              />
+              <ResumeContainer resume={activeResume} />
 
               <div className="mt-8 text-center text-sm text-gray-500">
                 <p>For the best print results, use Chrome or Edge browsers.</p>
