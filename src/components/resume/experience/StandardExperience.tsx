@@ -6,7 +6,7 @@ interface WorkExperienceProps {
   data: WorkExperienceData;
 }
 
-const WorkExperience: React.FC<WorkExperienceProps> = ({ data }) => {
+const StandardExperience: React.FC<WorkExperienceProps> = ({ data }) => {
   return (
     <section className="mb-3">
       <h2 className="text-lg font-bold uppercase mb-2">Work Experience</h2>
@@ -34,4 +34,4 @@ const WorkExperience: React.FC<WorkExperienceProps> = ({ data }) => {
   );
 };
 
-export default WorkExperience;
+export default StandardExperience;

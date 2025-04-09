@@ -1,28 +1,24 @@
 // src/components/sidebar/SidebarSection.tsx
 import React from 'react';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { ResumeI } from '../../types/resumeTypes';
-import { getAvailableDesigns } from '../designRegistry';
+import { Resume } from '../../types/resumeTypes';
+import { getDesignsBySectionId } from '../../registry/designRegistry';
 
 interface SidebarSectionProps {
     sectionId: string;
-    resumes: ResumeI[];
+    resumes: Resume[];
     activeResumeIndex: number;
     onResumeSelect: (index: number) => void;
-    useCompactSkills: boolean;
-    onToggleCompactSkills: () => void;
     onDesignSelect?: (sectionId: string, designName: string) => void;
 }
 
 const SidebarSection: React.FC<SidebarSectionProps> = ({
-                                                           sectionId,
-                                                           resumes,
-                                                           activeResumeIndex,
-                                                           onResumeSelect,
-                                                           useCompactSkills,
-                                                           onToggleCompactSkills,
-                                                           onDesignSelect
-                                                       }) => {
+    sectionId,
+    resumes,
+    activeResumeIndex,
+    onResumeSelect,
+    onDesignSelect
+}) => {
     const activeResume = resumes[activeResumeIndex];
 
     // Special handling for resumes section
@@ -67,41 +63,8 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
         );
     }
 
-    // Special handling for skills section for backward compatibility
-    if (sectionId === 'skills' && !onDesignSelect) {
-        return (
-            <div className="max-h-64 overflow-y-auto">
-                <div className="space-y-3">
-                    <button
-                        onClick={onToggleCompactSkills}
-                        className={`w-full rounded-md border p-2 text-left text-sm ${
-                            useCompactSkills
-                                ? 'border-blue-500 bg-blue-50'
-                                : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                    >
-                        <span className="font-medium">Compact View</span>
-                        <p className="mt-1 text-xs text-gray-500">Space-efficient bullet list</p>
-                    </button>
-
-                    <button
-                        onClick={onToggleCompactSkills}
-                        className={`w-full rounded-md border p-2 text-left text-sm ${
-                            !useCompactSkills
-                                ? 'border-blue-500 bg-blue-50'
-                                : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                    >
-                        <span className="font-medium">Detailed View</span>
-                        <p className="mt-1 text-xs text-gray-500">With skill level indicators</p>
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
     // Dynamic handling for all other sections based on available designs
-    const availableDesigns = getAvailableDesigns(sectionId);
+    const availableDesigns = getDesignsBySectionId(sectionId);
 
     if (availableDesigns.length === 0) {
         return (
@@ -127,7 +90,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
                 case 'skills':
                     return activeResume.designSelections.skillsDesign;
                 case 'experience':
-                    return activeResume.designSelections.workExperienceDesign;
+                    return activeResume.designSelections.experienceDesign;
                 case 'education':
                     return activeResume.designSelections.educationDesign;
                 case 'footer':
@@ -152,7 +115,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
                                     : 'border-gray-200 hover:border-gray-300'
                             }`}
                         >
-                            <span className="font-medium">{design.displayName}</span>
+                            <span className="font-medium">{design.name}</span>
                             {design.description && (
                                 <p className="mt-1 text-xs text-gray-500">{design.description}</p>
                             )}
@@ -172,7 +135,7 @@ const SidebarSection: React.FC<SidebarSectionProps> = ({
                         key={design.name}
                         className="w-full rounded-md border border-gray-200 p-2 text-left text-sm"
                     >
-                        <span className="font-medium">{design.displayName}</span>
+                        <span className="font-medium">{design.name}</span>
                         {design.description && (
                             <p className="mt-1 text-xs text-gray-500">{design.description}</p>
                         )}

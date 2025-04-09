@@ -1,4 +1,4 @@
-// src/components/CompactSkills.tsx
+// src/components/resume/skills/CompactSkills.tsx
 import React from 'react';
 import { SkillsData } from '../../../types/resumeTypes';
 
@@ -10,9 +10,9 @@ const CompactSkills: React.FC<SkillsProps> = ({ data }) => {
     // If categories exist, render skills grouped by category in a compact format
     if (data.categories && data.categories.length > 0) {
         return (
-            <section className="mb-2">
+            <section className="mb-6">
                 <h2 className="text-lg font-bold uppercase mb-2">Skills</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2 overflow-hidden">
                     {data.categories.map((category) => {
                         const categorySkills = data.skills.filter(skill => skill.category === category);
 
@@ -39,14 +39,14 @@ const CompactSkills: React.FC<SkillsProps> = ({ data }) => {
 
     // Otherwise, render a simple inline skill list
     return (
-        <section className="mb-2">
+        <section className="mb-6">
             <h2 className="text-lg font-bold uppercase mb-2">Skills</h2>
-            <div className="text-sm">
+            <div className="text-sm flex flex-wrap">
                 {data.skills.map((skill, index) => (
-                    <React.Fragment key={index}>
-                        <span className="font-medium">{skill.name}</span>
-                        {index < data.skills.length - 1 && <span className="mx-2">•</span>}
-                    </React.Fragment>
+                    <span key={index} className="mr-2 mb-1">
+            <span className="font-medium">{skill.name}</span>
+                        {index < data.skills.length - 1 && <span className="ml-1 mr-1">•</span>}
+          </span>
                 ))}
             </div>
         </section>

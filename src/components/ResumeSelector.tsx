@@ -1,9 +1,9 @@
 // src/components/ResumeSelector.tsx
 import React from 'react';
-import { ResumeI } from '../types/resumeTypes';
+import { Resume } from '../types/resumeTypes';
 
 interface ResumeSelectorProps {
-  resumes: ResumeI[];
+  resumes: Resume[];
   activeResumeIndex: number;
   onResumeSelect: (index: number) => void;
 }

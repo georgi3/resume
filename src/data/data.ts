@@ -4,8 +4,8 @@ import megogo from "./resumes/megogo";
 
 
 const  resumesArray = [
-    masterResume,
     megogo,
+    masterResume,
     cyberResume,
 ]
 
